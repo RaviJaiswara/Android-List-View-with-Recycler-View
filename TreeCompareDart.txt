@@ -1,0 +1,121 @@
+import 'dart:collection';
+
+void main() {
+  Node root1 = null;
+  root1 = insert(root1, 1);
+  root1 = insert(root1, 2);
+  root1 = insert(root1, 3);
+  root1 = insert(root1, 10);
+  root1 = insert(root1, 12);
+  root1 = insert(root1, 3);
+  root1 = insert(root1, 10);
+  root1 = insert(root1, 1);
+
+  Node root2 = null;
+  root2 = insert(root2, 4);
+  root2 = insert(root2, 3);
+  root2 = insert(root2, 10);
+  root2 = insert(root2, 12);
+
+  print("Tree 1 : " + "\n");
+  inorder(root1);
+  print('\n');
+  print("Tree 2 : " + "\n");
+  inorder(root2);
+  print('\n');
+  print("Common Nodes: ");
+
+  printCommon(root1, root2);
+}
+
+class Node {
+  int key;
+  Node left, right;
+}
+
+Node newNode(int ele) {
+  Node temp = new Node();
+  temp.key = ele;
+  temp.left = null;
+  temp.right = null;
+  return temp;
+}
+
+void printCommon(Node root1, Node root2) {
+  Stack<Node> s1 = Stack();
+  Stack<Node> s2 = Stack();
+
+  while (true) {
+    if (root1 != null) {
+      s1.push(root1);
+      root1 = root1.left;
+    } else if (root2 != null) {
+      s2.push(root2);
+      root2 = root2.left;
+    } else if (!s1.isEmpty && !s2.isEmpty) {
+      root1 = s1.peek();
+      root2 = s2.peek();
+
+      if (root1.key == root2.key) {
+        print(root1.key.toString() + ' ');
+        s1.pop();
+        s2.pop();
+
+        root1 = root1.right;
+        root2 = root2.right;
+      } else if (root1.key < root2.key) {
+        s1.pop();
+        root1 = root1.right;
+
+        root2 = null;
+      } else if (root1.key > root2.key) {
+        s2.pop();
+        root2 = root2.right;
+        root1 = null;
+      }
+    } else
+      break;
+  }
+}
+
+void inorder(Node root) {
+  if (root != null) {
+    inorder(root.left);
+    print(root.key.toString() + '');
+    inorder(root.right);
+  }
+}
+
+Node insert(Node node, int key) {
+  if (node == null) return newNode(key);
+  if (key < node.key)
+    node.left = insert(node.left, key);
+  else if (key > node.key) node.right = insert(node.right, key);
+
+  return node;
+}
+
+class Stack<T> {
+  final _stack = Queue<T>();
+
+  void push(T element) {
+    _stack.addLast(element);
+  }
+
+  T pop() {
+    final T lastElement = _stack.last;
+    _stack.removeLast();
+    return lastElement;
+  }
+
+  T peek() {
+    final T latestElement = _stack.last;
+    return latestElement;
+  }
+
+  void clear() {
+    _stack.clear();
+  }
+
+  bool get isEmpty => _stack.isEmpty;
+}
